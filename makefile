@@ -11,20 +11,24 @@
 
 # Run "make help" for target help.
 
-MCU          = at90usb1287
+MCU          = at90usb1286
 ARCH         = AVR8
-BOARD        = USBKEY
+BOARD        = LaFortuna
 F_CPU        = 8000000
 F_USB        = $(F_CPU)
 OPTIMIZATION = s
 TARGET       = Keyboard
 SRC          = $(TARGET).c Descriptors.c $(LUFA_SRC_USB)
-LUFA_PATH    = ../../../../LUFA
+LUFA_PATH    = lufa/LUFA
 CC_FLAGS     = -DUSE_LUFA_CONFIG_HEADER -IConfig/
 LD_FLAGS     =
 
 # Default target
 all:
+
+upload: Keyboard.hex
+	dfu-programmer $(MCU) erase
+	dfu-programmer $(MCU) flash Keyboard.hex
 
 # Include LUFA build script makefiles
 include $(LUFA_PATH)/Build/lufa_core.mk
@@ -36,3 +40,5 @@ include $(LUFA_PATH)/Build/lufa_dfu.mk
 include $(LUFA_PATH)/Build/lufa_hid.mk
 include $(LUFA_PATH)/Build/lufa_avrdude.mk
 include $(LUFA_PATH)/Build/lufa_atprogram.mk
+
+.PHONY: upload

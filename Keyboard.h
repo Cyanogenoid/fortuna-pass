@@ -44,27 +44,32 @@
 		#include <avr/interrupt.h>
 		#include <stdbool.h>
 		#include <string.h>
+ 		#include <stdint.h>
 
 		#include "Descriptors.h"
 
 		#include <LUFA/Drivers/USB/USB.h>
-		#include <LUFA/Drivers/Board/Joystick.h>
-		#include <LUFA/Drivers/Board/Buttons.h>
-		#include <LUFA/Drivers/Board/LEDs.h>
 		#include <LUFA/Platform/Platform.h>
 
 	/* Macros: */
 		/** LED mask for the library LED driver, to indicate that the USB interface is not ready. */
-		#define LEDMASK_USB_NOTREADY        LEDS_LED1
+		#define LEDMASK_USB_NOTREADY        0
 
 		/** LED mask for the library LED driver, to indicate that the USB interface is enumerating. */
-		#define LEDMASK_USB_ENUMERATING     (LEDS_LED2 | LEDS_LED3)
+		#define LEDMASK_USB_ENUMERATING     0
 
 		/** LED mask for the library LED driver, to indicate that the USB interface is ready. */
-		#define LEDMASK_USB_READY           (LEDS_LED2 | LEDS_LED4)
+		#define LEDMASK_USB_READY           PB7
 
 		/** LED mask for the library LED driver, to indicate that an error has occurred in the USB interface. */
-		#define LEDMASK_USB_ERROR           (LEDS_LED1 | LEDS_LED3)
+		#define LEDMASK_USB_ERROR           0
+
+		#define SWN     PC2
+		#define SWE     PC3
+		#define SWS     PC4
+		#define SWW     PC5
+		#define OS_CD   PB6
+		#define SWC     PE7
 
 	/* Function Prototypes: */
 		void SetupHardware(void);
@@ -80,6 +85,7 @@
 		void ProcessLEDReport(const uint8_t LEDReport);
 		void SendNextReport(void);
 		void ReceiveNextReport(void);
+
 
 #endif
 

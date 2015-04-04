@@ -1,6 +1,11 @@
 #include "Keyboard.h"
 
+
 void init(void);
+void CreateKeyboardReport(USB_KeyboardReport_Data_t* const ReportData);
+void ProcessLEDReport(const uint8_t LEDReport);
+void SendNextReport(void);
+void ReceiveNextReport(void);
 
 
 /** Current Idle period. This is set by the host via a Set Idle HID class request to silence the device's reports

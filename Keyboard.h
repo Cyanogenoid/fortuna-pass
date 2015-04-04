@@ -81,11 +81,6 @@
 		void EVENT_USB_Device_ControlRequest(void);
 		void EVENT_USB_Device_StartOfFrame(void);
 
-		void CreateKeyboardReport(USB_KeyboardReport_Data_t* const ReportData);
-		void ProcessLEDReport(const uint8_t LEDReport);
-		void SendNextReport(void);
-		void ReceiveNextReport(void);
-
 
 #endif
 

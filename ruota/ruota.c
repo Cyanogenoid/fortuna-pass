@@ -10,8 +10,8 @@
 
 #include <avr/io.h>
 #include <avr/interrupt.h>
-#include "rios.h"
 #include "ruota.h"
+#include "../rios/rios.h"
 
 
 #define ROTA	PE4

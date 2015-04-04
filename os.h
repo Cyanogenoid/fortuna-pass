@@ -25,6 +25,7 @@
 #include "ruota/ruota.h"
 #include "fatfs/ff.h"
 #include "kb/Keyboard.h"
+#include "kb/Descriptors.h"
 
 
 

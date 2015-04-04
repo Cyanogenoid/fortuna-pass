@@ -1,60 +1,22 @@
 #include "os.h"
 
 
-void init(void);
 void CreateKeyboardReport(USB_KeyboardReport_Data_t* const ReportData);
 void ProcessLEDReport(const uint8_t LEDReport);
 void SendNextReport(void);
 void ReceiveNextReport(void);
+void HID_Task(void);
 
 
-/** Current Idle period. This is set by the host via a Set Idle HID class request to silence the device's reports
- *  for either the entire idle duration, or until the report status changes (e.g. the user presses a key).
- */
-static uint16_t IdleCount = 500;
+void main(void) {
+    os_init();
 
-/** Current Idle period remaining. When the IdleCount value is set, this tracks the remaining number of idle
- *  milliseconds. This is separate to the IdleCount timer and is incremented and compared as the host may request
- *  the current idle period via a Get Idle HID class request, thus its value must be preserved.
- */
-static uint16_t IdleMSRemaining = 0;
+    os_add_task( HID_Task,            10, 1);
+    os_add_task( USB_USBTask,         10, 1);
 
-/** Main program entry point. This routine configures the hardware required by the application, then
- *  enters a loop to run the application tasks in sequence.
- */
-int main(void)
-{
-	init();
-
-	PORTB = LEDMASK_USB_NOTREADY;
-	GlobalInterruptEnable();
-
-	for (;;)
-	{
-		HID_Task();
-		USB_USBTask();
-	}
-}
-
-/** Configures the board hardware and chip peripherals for the demo's functionality. */
-void init(void)
-{
-	/* Disable watchdog if enabled by bootloader/fuses */
-	MCUSR &= ~(1 << WDRF);
-	wdt_disable();
-
-	/* Disable clock division */
-	clock_prescale_set(clock_div_1);
-
-	/* USB Initialization */
-	USB_Init();
-
-	/* Enable output on LED pin */
-	DDRB  |=  _BV(PB7);
-	PORTB &= ~_BV(PB7);
-
-	DDRE &= ~_BV(SWC);   /* Central button */
-	PORTE |= _BV(SWC);
+    sei();
+    for(;;){}
+    
 }
 
 /** Processes a received LED report, and updates the board LEDs states to match.
@@ -63,12 +25,10 @@ void init(void)
  */
 void ProcessLEDReport(const uint8_t LEDReport)
 {
-	uint8_t mask = 0;
-
-	if (LEDReport & HID_KEYBOARD_LED_CAPSLOCK)
-		mask |= _BV(PB7);
-
-	PORTB = mask;
+	// if (LEDReport & HID_KEYBOARD_LED_CAPSLOCK)
+	// 	LED_ON;
+	// else
+	// 	LED_OFF;
 }
 
 /** Sends the next HID report to the host, via the keyboard data endpoint. */
@@ -158,6 +118,7 @@ void CreateKeyboardReport(USB_KeyboardReport_Data_t* const ReportData)
 /** Function to manage HID report generation and transmission to the host, when in report mode. */
 void HID_Task(void)
 {
+	os_led_brightness(0);
 	/* Device must be connected and configured for the task to run */
 	if (USB_DeviceState != DEVICE_STATE_Configured)
 	  return;
@@ -167,4 +128,6 @@ void HID_Task(void)
 
 	/* Process the LED report sent from the host */
 	ReceiveNextReport();
+
+	os_led_brightness(255);
 }

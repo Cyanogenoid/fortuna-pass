@@ -36,11 +36,11 @@ typedef struct {
 	uint16_t top, bottom;
 } rectangle;	
 
-void init_lcd();
+void init_lcd(void);
 void lcd_brightness(uint8_t i);
 void set_orientation(orientation o);
 void set_frame_rate_hz(uint8_t f);
-void clear_screen();
+void clear_screen(void);
 void fill_rectangle(rectangle r, uint16_t col);
 void fill_rectangle_indexed(rectangle r, uint16_t* col);
 void display_char(char c);

@@ -25,7 +25,7 @@
 */
 #define OS_LED_BRIGHTNESS
 
-void os_init_scheduler();
+void os_init_scheduler(void);
 
 void os_led_brightness(uint8_t brightness);
 

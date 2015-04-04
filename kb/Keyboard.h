@@ -72,15 +72,23 @@
 		#define SWC     PE7
 
 	/* Function Prototypes: */
-		void SetupHardware(void);
-		void HID_Task(void);
-
 		void EVENT_USB_Device_Connect(void);
 		void EVENT_USB_Device_Disconnect(void);
 		void EVENT_USB_Device_ConfigurationChanged(void);
 		void EVENT_USB_Device_ControlRequest(void);
 		void EVENT_USB_Device_StartOfFrame(void);
 
+
+/** Current Idle period. This is set by the host via a Set Idle HID class request to silence the device's reports
+ *  for either the entire idle duration, or until the report status changes (e.g. the user presses a key).
+ */
+static uint16_t IdleCount = 500;
+
+/** Current Idle period remaining. When the IdleCount value is set, this tracks the remaining number of idle
+ *  milliseconds. This is separate to the IdleCount timer and is incremented and compared as the host may request
+ *  the current idle period via a Get Idle HID class request, thus its value must be preserved.
+ */
+static uint16_t IdleMSRemaining = 0;
 
 #endif
 

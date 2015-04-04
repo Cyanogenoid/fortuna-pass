@@ -17,7 +17,7 @@ BOARD        = LaFortuna
 F_CPU        = 8000000
 F_USB        = $(F_CPU)
 OPTIMIZATION = s
-TARGET       = Keyboard
+TARGET       = main
 SRC          = $(TARGET).c Descriptors.c $(LUFA_SRC_USB)
 LUFA_PATH    = lufa/LUFA
 CC_FLAGS     = -DUSE_LUFA_CONFIG_HEADER -IConfig/
@@ -26,9 +26,9 @@ LD_FLAGS     =
 # Default target
 all:
 
-upload: Keyboard.hex
+upload: main.hex
 	dfu-programmer $(MCU) erase
-	dfu-programmer $(MCU) flash Keyboard.hex
+	dfu-programmer $(MCU) flash main.hex
 
 # Include LUFA build script makefiles
 include $(LUFA_PATH)/Build/lufa_core.mk

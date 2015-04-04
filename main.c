@@ -108,11 +108,12 @@ void CreateKeyboardReport(USB_KeyboardReport_Data_t* const ReportData)
 	/* Clear the report contents */
 	memset(ReportData, 0, sizeof(USB_KeyboardReport_Data_t));
 
-	/* Make sent key uppercase by indicating that the left shift key is pressed */
-	ReportData->Modifier = HID_KEYBOARD_MODIFIER_LEFTSHIFT;
 
-	if (!(PINE & _BV(SWC)))
+	if (!(PINE & _BV(SWC))) {
 	  ReportData->KeyCode[UsedKeyCodes++] = HID_KEYBOARD_SC_A;
+	  /* Make sent key uppercase by indicating that the left shift key is pressed */
+	  ReportData->Modifier = HID_KEYBOARD_MODIFIER_LEFTSHIFT;
+	}
 }
 
 /** Function to manage HID report generation and transmission to the host, when in report mode. */

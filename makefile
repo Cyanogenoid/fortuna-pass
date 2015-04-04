@@ -18,8 +18,8 @@ F_CPU        = 8000000
 F_USB        = $(F_CPU)
 OPTIMIZATION = s
 TARGET       = main
-SRC          = $(TARGET).c Descriptors.c $(LUFA_SRC_USB)
-LUFA_PATH    = lufa/LUFA
+SRC          = $(TARGET).c kb/Descriptors.c $(LUFA_SRC_USB)
+LUFA_PATH    = kb/lufa/LUFA
 CC_FLAGS     = -DUSE_LUFA_CONFIG_HEADER -IConfig/
 LD_FLAGS     =
 

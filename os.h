@@ -20,10 +20,11 @@
 #include <stdio.h>
 #include <avr/io.h>
 #include <avr/interrupt.h>
-#include "lcd.h"
-#include "rios.h"
-#include "ruota.h"
-#include "ff.h"
+#include "lcd/lcd.h"
+#include "rios/rios.h"
+#include "ruota/ruota.h"
+#include "fatfs/ff.h"
+#include "kb/Keyboard.h"
 
 
 

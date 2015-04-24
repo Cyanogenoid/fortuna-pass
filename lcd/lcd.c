@@ -51,6 +51,7 @@ void init_lcd()
     write_cmd_data(TEARING_EFFECT_LINE_ON, 0x00);
     EICRB |= _BV(ISC61);
     PORTB |= _BV(BLC);
+    lcd_brightness(255);
 }
 
 void lcd_brightness(uint8_t i)

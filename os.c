@@ -20,9 +20,5 @@ void os_init(void) {
     os_init_scheduler();
     os_init_ruota();
     USB_Init();
-
-    // LCD doesn't work when USB is init-ed
-    // The following line fixes this. I have no clue why.
-    USB_INT_ClearAllInterrupts();
 }
 

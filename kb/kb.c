@@ -189,8 +189,6 @@ void CreateKeyboardReport(USB_KeyboardReport_Data_t* const ReportData)
     memset(ReportData, 0, sizeof(USB_KeyboardReport_Data_t));
 
     if (!just_sent) {
-        display_string(to_send);
-        display_string("\n");
         if (*to_send != '\0') {
           kb_input inp = resolve_char(*to_send);
           ReportData->KeyCode[UsedKeyCodes++] = inp.code;

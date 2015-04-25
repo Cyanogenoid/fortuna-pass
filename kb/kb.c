@@ -3,6 +3,7 @@
 #include "os.h"
 
 
+
 static volatile char* to_send = "";
 
 void kb_init(void) {
@@ -17,36 +18,88 @@ void send_text(char* s) {
 }
 
 /* Translates a character into its corresponding scancode.
-Supported ranges:
-'a' - 'z'
-'A' - 'Z'
-'0' - '9'
-' '
+Supported range: All printable ASCII characters. [32, 127), [0x20, 0x7F)
 */
 kb_input resolve_char(char c) {
-    uint8_t lufa_code = 0x00;
-    bool lufa_shift = false;
+    kb_input kb = {
+        .code = 0x00,
+        .shift = false,
+    };
 
     if ('A' <= c && c <= 'Z') {
-        lufa_shift = true;
+        kb.shift = true;
         c = c - 'A' + 'a'; // treat the same as lowercase
     }
+
     if ('a' <= c && c <= 'z') {
-        lufa_code = c - 'a' + HID_KEYBOARD_SC_A;
-    }
-    if ('0' <= c && c <= '9') {
-        lufa_code = c - '0' + HID_KEYBOARD_SC_1_AND_EXCLAMATION;
+        kb.code = c - 'a' + HID_KEYBOARD_SC_A;
+    } else if ('0' <= c && c <= '9') {
+        if (c == '0') {
+            c += 10;
+        }
+        kb.code = c - '1' + HID_KEYBOARD_SC_1_AND_EXCLAMATION;
+    } else if (' ' <= c && c <= '/') {
+        uint8_t us_map[] = {
+        /*   */ HID_KEYBOARD_SC_SPACE,
+        /* ! */ HID_KEYBOARD_SC_1_AND_EXCLAMATION,
+        /* " */ HID_KEYBOARD_SC_APOSTROPHE_AND_QUOTE,
+        /* # */ HID_KEYBOARD_SC_3_AND_HASHMARK,
+        /* $ */ HID_KEYBOARD_SC_4_AND_DOLLAR,
+        /* % */ HID_KEYBOARD_SC_5_AND_PERCENTAGE,
+        /* & */ HID_KEYBOARD_SC_7_AND_AMPERSAND,
+        /* ' */ HID_KEYBOARD_SC_APOSTROPHE_AND_QUOTE,
+        /* ( */ HID_KEYBOARD_SC_9_AND_OPENING_PARENTHESIS,
+        /* ) */ HID_KEYBOARD_SC_0_AND_CLOSING_PARENTHESIS,
+        /* * */ HID_KEYBOARD_SC_8_AND_ASTERISK,
+        /* + */ HID_KEYBOARD_SC_EQUAL_AND_PLUS,
+        /* , */ HID_KEYBOARD_SC_COMMA_AND_LESS_THAN_SIGN,
+        /* - */ HID_KEYBOARD_SC_MINUS_AND_UNDERSCORE,
+        /* . */ HID_KEYBOARD_SC_DOT_AND_GREATER_THAN_SIGN,
+        /* / */ HID_KEYBOARD_SC_SLASH_AND_QUESTION_MARK,
+        };
+        kb.code = us_map[c - ' '];
+        kb.shift = !(c == '\''
+                  || c == ','
+                  || c == '-'
+                  || c == '.'
+                  || c == '/');
+    } else if (':' <= c && c <= '@') {
+        uint8_t us_map[] = {
+        /* : */ HID_KEYBOARD_SC_SEMICOLON_AND_COLON,
+        /* ; */ HID_KEYBOARD_SC_SEMICOLON_AND_COLON,
+        /* < */ HID_KEYBOARD_SC_COMMA_AND_LESS_THAN_SIGN,
+        /* = */ HID_KEYBOARD_SC_EQUAL_AND_PLUS,
+        /* > */ HID_KEYBOARD_SC_DOT_AND_GREATER_THAN_SIGN,
+        /* ? */ HID_KEYBOARD_SC_SLASH_AND_QUESTION_MARK,
+        /* @ */ HID_KEYBOARD_SC_2_AND_AT,
+        };
+        kb.code = us_map[c - ':'];
+        kb.shift = !(c == ';'
+                  || c == '=');
+    } else if ('[' <= c && c <= '`') {
+        uint8_t us_map[] = {
+        /* [ */ HID_KEYBOARD_SC_OPENING_BRACKET_AND_OPENING_BRACE,
+        /* \ */ HID_KEYBOARD_SC_BACKSLASH_AND_PIPE,
+        /* ] */ HID_KEYBOARD_SC_CLOSING_BRACKET_AND_CLOSING_BRACE,
+        /* ^ */ HID_KEYBOARD_SC_6_AND_CARET,
+        /* _ */ HID_KEYBOARD_SC_MINUS_AND_UNDERSCORE,
+        /* ` */ HID_KEYBOARD_SC_GRAVE_ACCENT_AND_TILDE,
+        };
+        kb.code = us_map[c - '['];
+        kb.shift = c == '_'
+                || c == '^';
+    } else if ('{' <= c && c <= '~') {
+        uint8_t us_map[] = {
+        /* { */ HID_KEYBOARD_SC_OPENING_BRACKET_AND_OPENING_BRACE,
+        /* | */ HID_KEYBOARD_SC_BACKSLASH_AND_PIPE,
+        /* } */ HID_KEYBOARD_SC_CLOSING_BRACKET_AND_CLOSING_BRACE,
+        /* ~ */ HID_KEYBOARD_SC_GRAVE_ACCENT_AND_TILDE,
+        };
+        kb.code = us_map[c - '{'];
+        kb.shift = true;
     }
 
-    if (c == ' ') {
-        lufa_code = HID_KEYBOARD_SC_SPACE;
-    }
-
-    kb_input inp = {
-        .code = lufa_code,
-        .shift = lufa_shift,
-    };
-    return inp;
+    return kb;
 }
 
 

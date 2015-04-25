@@ -19,6 +19,6 @@ void os_init(void) {
     init_lcd();
     os_init_scheduler();
     os_init_ruota();
-    USB_Init();
+    kb_init();
 }
 

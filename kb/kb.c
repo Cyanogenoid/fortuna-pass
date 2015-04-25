@@ -16,6 +16,39 @@ void send_text(char* s) {
     to_send = s;
 }
 
+/* Translates a character into its corresponding scancode.
+Supported ranges:
+'a' - 'z'
+'A' - 'Z'
+'0' - '9'
+' '
+*/
+kb_input resolve_char(char c) {
+    uint8_t lufa_code = 0x00;
+    bool lufa_shift = false;
+
+    if ('A' <= c && c <= 'Z') {
+        lufa_shift = true;
+        c = c - 'A' + 'a'; // treat the same as lowercase
+    }
+    if ('a' <= c && c <= 'z') {
+        lufa_code = c - 'a' + HID_KEYBOARD_SC_A;
+    }
+    if ('0' <= c && c <= '9') {
+        lufa_code = c - '0' + HID_KEYBOARD_SC_1_AND_EXCLAMATION;
+    }
+
+    if (c == ' ') {
+        lufa_code = HID_KEYBOARD_SC_SPACE;
+    }
+
+    kb_input inp = {
+        .code = lufa_code,
+        .shift = lufa_shift,
+    };
+    return inp;
+}
+
 
 /** Processes a received LED report, and updates the board LEDs states to match.
  *
@@ -106,8 +139,12 @@ void CreateKeyboardReport(USB_KeyboardReport_Data_t* const ReportData)
         display_string(to_send);
         display_string("\n");
         if (*to_send != '\0') {
-          ReportData->KeyCode[UsedKeyCodes++] = HID_KEYBOARD_SC_A;
-          // ReportData->Modifier = HID_KEYBOARD_MODIFIER_LEFTSHIFT;
+          kb_input inp = resolve_char(*to_send);
+          ReportData->KeyCode[UsedKeyCodes++] = inp.code;
+          if (inp.shift) {
+              ReportData->Modifier = HID_KEYBOARD_MODIFIER_LEFTSHIFT;
+          }
+
           to_send++;
           just_sent = true;
         }

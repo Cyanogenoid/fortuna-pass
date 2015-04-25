@@ -18,7 +18,7 @@ void main(void) {
 int check_switches(int state) {
 
     if (get_switch_press(_BV(SWC))) {
-        send_text("hello");
+        send_text("the quick brown fox jumps over the lazy dog 0123456789");
     }
 
 }

@@ -18,10 +18,18 @@ F_CPU        = 8000000
 F_USB        = $(F_CPU)
 OPTIMIZATION = s
 TARGET       = main
-OS_SRC       = os.c $(wildcard rios/*.c) $(wildcard ruota/*.c) $(wildcard fatfs/*.c) $(wildcard lcd/*.c) $(wildcard kb/*.c)
+OS_SRC       = os.c
+OS_SRC += $(wildcard rios/*.c)
+OS_SRC += $(wildcard ruota/*.c)
+OS_SRC += $(wildcard fatfs/*.c)
+OS_SRC += $(wildcard lcd/*.c)
+OS_SRC += $(wildcard kb/*.c)
+OS_SRC += avr-crypto-lib/bigint/bigint.c
+OS_SRC += avr-crypto-lib/rsa/rsa_basic.c
 SRC          = $(TARGET).c $(LUFA_SRC_USB) $(OS_SRC)
 LUFA_PATH    = kb/lufa/LUFA
-CC_FLAGS     = -DUSE_LUFA_CONFIG_HEADER -IConfig/ -Wno-main
+CRYPTO_INC   = -Iavr-crypto-lib/rsa/ -Iavr-crypto-lib/test_src/ -Iavr-crypto-lib/bigint/
+CC_FLAGS     = -DUSE_LUFA_CONFIG_HEADER -IConfig/ $(CRYPTO_INC) -Wno-main
 LD_FLAGS     =
 
 # Default target

@@ -27,6 +27,7 @@ OS_SRC += $(wildcard kb/*.c)
 OS_SRC += avr-crypto-lib/bigint/bigint.c
 OS_SRC += avr-crypto-lib/rsa/rsa_basic.c
 OS_SRC += $(wildcard avr-crypto-lib/aes/*.c)
+OS_SRC += avr-crypto-lib/gf256mul/gf256mul.S
 SRC          = $(TARGET).c $(LUFA_SRC_USB) $(OS_SRC)
 LUFA_PATH    = kb/lufa/LUFA
 CRYPTO_INC   = -Iavr-crypto-lib/rsa/ -Iavr-crypto-lib/test_src/ -Iavr-crypto-lib/bigint/ -Iavr-crypto-lib/gf256mul/

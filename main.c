@@ -1,5 +1,6 @@
 #include "os.h"
 #include <string.h>
+#include <stdlib.h>
 
 
 int check_switches(int);
@@ -17,6 +18,36 @@ void main(void) {
 }
 
 int check_switches(int state) {
+
+    if (get_switch_press(_BV(SWN))) {
+        char* data = "secret";
+        const uint8_t chunks = 1;
+        char* data_string = (char*) malloc(16*chunks*sizeof(char) + 1);
+        strcpy(data_string, data);
+
+        // create keyschedule
+        char* key = "password";
+        aes256_ctx_t context = {
+            .key = {0},
+        };
+        aes256_init(&key, &context);
+
+        display_string(data);
+        display_string("\n");
+        int i;
+        for (i = 0; i < 16*chunks; i += 16) {
+            aes256_enc(&(data[i]), &context);
+        }
+        display_string(data);
+        display_string("\n");
+        for (i = 0; i < 16*chunks; i += 16) {
+            aes256_dec(&(data[i]), &context);
+        }
+        display_string(data);
+        display_string("\n");
+
+        free(data_string);
+    }
 
     if (get_switch_press(_BV(SWC))) {
         // TODO load from EEPROM

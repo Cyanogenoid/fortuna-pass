@@ -1,6 +1,8 @@
 [submodule "lufa"]
 	path = kb/lufa
 	url = https://github.com/abcminiuser/lufa.git
+	ignore = dirty
 [submodule "avr-crypto-lib"]
 	path = avr-crypto-lib
 	url = http://git.cryptolib.org/avr-crypto-lib.git
+	ignore = dirty

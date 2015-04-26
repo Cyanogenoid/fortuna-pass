@@ -27,6 +27,7 @@
 #include "kb/kb.h"
 #include "avr-crypto-lib/bigint/bigint.h"
 #include "avr-crypto-lib/rsa/rsa_basic.h"
+#include "avr-crypto-lib/aes/aes.h"
 
 
 #define LED_ON      PORTB |=  _BV(PINB7)

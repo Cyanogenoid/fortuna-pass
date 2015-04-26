@@ -261,3 +261,15 @@ void display_register(uint8_t reg)
 	}
 }
 
+void display_uint16(uint16_t n) {
+    char digits[5] = {'\0'};
+    int i = 0;
+    do {
+        int digit = n % 10;
+        digits[i++] = digit;
+        n /= 10;
+    } while (n > 0);
+    while (--i+1) {
+        display_char('0' + digits[i]);
+    }
+}

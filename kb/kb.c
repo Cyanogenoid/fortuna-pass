@@ -9,8 +9,8 @@ static volatile char* to_send = "";
 void kb_init(void) {
     USB_Init();
 
-    os_add_task( HID_Task,            10, 1);
-    os_add_task( USB_USBTask,         10, 1);
+    os_add_task(HID_Task, 10, 1);
+    os_add_task(USB_Task, 10, 1);
 }
 
 void send_text(char* s) {
@@ -204,8 +204,13 @@ void CreateKeyboardReport(USB_KeyboardReport_Data_t* const ReportData)
     }
 }
 
+int USB_Task(int state) {
+    USB_USBTask();
+    return 0;
+}
+
 /** Function to manage HID report generation and transmission to the host, when in report mode. */
-void HID_Task(void)
+int HID_Task(int state)
 {
     /* Device must be connected and configured for the task to run */
     if (USB_DeviceState != DEVICE_STATE_Configured)
@@ -216,4 +221,6 @@ void HID_Task(void)
 
     /* Process the LED report sent from the host */
     ReceiveNextReport();
+
+    return 0;
 }

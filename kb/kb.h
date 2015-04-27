@@ -21,6 +21,7 @@ void CreateKeyboardReport(USB_KeyboardReport_Data_t* const ReportData);
 void ProcessLEDReport(const uint8_t LEDReport);
 void SendNextReport(void);
 void ReceiveNextReport(void);
-void HID_Task(void);
+int USB_Task(int);
+int HID_Task(int);
 
 #endif

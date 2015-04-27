@@ -25,9 +25,7 @@
 #include "ruota/ruota.h"
 #include "fatfs/ff.h"
 #include "kb/kb.h"
-#include "avr-crypto-lib/bigint/bigint.h"
-#include "avr-crypto-lib/rsa/rsa_basic.h"
-#include "avr-crypto-lib/aes/aes.h"
+#include "crypto/crypto.h"
 
 
 #define LED_ON      PORTB |=  _BV(PINB7)

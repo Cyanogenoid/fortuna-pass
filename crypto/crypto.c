@@ -7,13 +7,15 @@
 #define PRIVATE_KEY_LENGTH_BIT 2048
 #define PRIVATE_KEY_LENGTH_BYTE PRIVATE_KEY_LENGTH_BIT/8
 #define MODULUS 3233
+#define MODULUS_RIGHT MODULUS & 0xFF
+#define MODULUS_LEFT MODULUS >> 8
 
 char eep_priv_key[PRIVATE_KEY_LENGTH_BYTE] EEMEM = PRIVATE_KEY;
 static rsa_privatekey_t priv_key;
 static bigint_t modulus = {
     .length_W = 2,
     .info = 0,
-    .wordv = {MODULUS & 0xFF, MODULUS >> 8},
+    .wordv = (bigint_t[]) {MODULUS_RIGHT, MODULUS_LEFT},
 };
 static bigint_t priv_d;
 

@@ -66,6 +66,8 @@ int process_login(void) {
 
 
     if (get_switch_press(_BV(SWC))) {
+        display_string(pass);
+        display_string("\n");
         load_private_key(pass);
         // TODO maybe verify correct pass
         return STATE_BROWSE;

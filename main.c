@@ -40,6 +40,7 @@ int transition(int state) {
 
 int process_sd_wait(void) {
     if (get_switch_long(_BV(OS_CD))) {
+        display_string("Enter your password:\n");
         return STATE_LOGIN;
     }
 
@@ -47,6 +48,29 @@ int process_sd_wait(void) {
 }
 
 int process_login(void) {
+    static char pass[256] = {0};
+    static uint8_t length = 0;
+
+    if (get_switch_press(_BV(SWN))) {
+        pass[length++] = 'N';
+    }
+    if (get_switch_press(_BV(SWE))) {
+        pass[length++] = 'E';
+    }
+    if (get_switch_press(_BV(SWS))) {
+        pass[length++] = 'S';
+    }
+    if (get_switch_press(_BV(SWW))) {
+        pass[length++] = 'W';
+    }
+
+
+    if (get_switch_press(_BV(SWC))) {
+        load_private_key(pass);
+        // TODO maybe verify correct pass
+        return STATE_BROWSE;
+    }
+
     return STATE_LOGIN;
 }
 

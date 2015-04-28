@@ -79,5 +79,17 @@ int process_browse(void) {
 }
 
 int process_unlock(void) {
+    bool unlocked = false;
+
+    if (unlocked) {
+        // load password into memory
+        char password[] = {};
+        size_t bytes = 0;
+
+        decrypt(password, bytes);
+        send_text(password);
+        return STATE_BROWSE;
+    }
+
     return STATE_UNLOCK;
 }

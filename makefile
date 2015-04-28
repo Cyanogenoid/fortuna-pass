@@ -39,8 +39,15 @@ LD_FLAGS     =
 all:
 
 upload: main.hex
-	dfu-programmer $(MCU) erase
+	dfu-programmer $(MCU) erase --force
 	dfu-programmer $(MCU) flash main.hex
+	dfu-programmer $(MCU) launch
+
+eeprom: main.hex main.eep
+	dfu-programmer $(MCU) erase --force
+	dfu-programmer $(MCU) flash --eeprom --force main.eep
+	dfu-programmer $(MCU) flash main.hex
+	dfu-programmer $(MCU) launch
 
 # Include LUFA build script makefiles
 include $(LUFA_PATH)/Build/lufa_core.mk
@@ -53,4 +60,4 @@ include $(LUFA_PATH)/Build/lufa_hid.mk
 include $(LUFA_PATH)/Build/lufa_avrdude.mk
 include $(LUFA_PATH)/Build/lufa_atprogram.mk
 
-.PHONY: upload
+.PHONY: upload eeprom

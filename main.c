@@ -7,7 +7,8 @@
 #define STATE_UNLOCK 2
 #define STATE_SD_WAIT 3
 #define STATE_UNLOCKED 4
-
+#define PLACEHOLDER '7'
+#define PLACEHOLDER_COUNT 8
 
 int transition(int);
 int process_login(void);
@@ -88,24 +89,22 @@ int process_browse(void) {
 }
 
 int process_unlock(void) {
-    const char placeholder = '7';
-    const uint8_t placeholder_count = 8;
-    static uint8_t back_count = placeholder_count;
+    static uint8_t back_count = PLACEHOLDER_COUNT;
 
     if (get_switch_press(_BV(SWC))) {
         // push out placeholder characters
-        char buffer[placeholder_count+1] = {placeholder};
+        char buffer[PLACEHOLDER_COUNT+1] = {PLACEHOLDER};
         send_text(buffer);
     }
     if (get_switch_press(_BV(SWW))) {
-        back_count = placeholder_count;
+        back_count = PLACEHOLDER_COUNT;
         return STATE_BROWSE;
     }
     while (os_enc_delta()) { // TODO figure out how enc_delta works
         // push out backspaces to remove placeholders and no more
     }
     if (back_count == 0) {
-        back_count = placeholder_count;
+        back_count = PLACEHOLDER_COUNT;
         return STATE_UNLOCKED;
     }
 

@@ -98,6 +98,15 @@ kb_input resolve_char(char c) {
         kb.code = us_map[c - '{'];
         kb.shift = true;
     }
+    if (c == '\b') {
+        kb.code = HID_KEYBOARD_SC_BACKSPACE;
+    }
+    if (c == '\n') {
+        kb.code = HID_KEYBOARD_SC_ENTER;
+    }
+    if (c == '\t') {
+        kb.code = HID_KEYBOARD_SC_TAB;
+    }
 
     return kb;
 }

@@ -9,6 +9,8 @@
 #define STATE_UNLOCKED 4
 #define PLACEHOLDER '7'
 #define PLACEHOLDER_COUNT 8
+#define FILE_CHUNK_SIZE  16
+#define MAX_FILE_SIZE  512
 
 int transition(int);
 int process_login(void);
@@ -16,6 +18,10 @@ int process_browse(void);
 int process_unlock(void);
 int process_sd_wait(void);
 int process_unlocked(void);
+
+
+static char filename[256] = {0};
+static FIL File;
 
 void main(void) {
     os_init();
@@ -85,38 +91,70 @@ int process_login(void) {
 
 int process_browse(void) {
     // TODO start filesystem navigator
-    return STATE_BROWSE;
+    strcpy(&filename, "test.txt");
+    return STATE_UNLOCK;
+    // return STATE_BROWSE;
 }
 
 int process_unlock(void) {
+    display_string("Spin to win\n");
     static uint8_t back_count = PLACEHOLDER_COUNT;
 
     if (get_switch_press(_BV(SWC))) {
         // push out placeholder characters
         char buffer[PLACEHOLDER_COUNT+1] = {PLACEHOLDER};
-        send_text(buffer);
-    }
-    if (get_switch_press(_BV(SWW))) {
-        back_count = PLACEHOLDER_COUNT;
-        return STATE_BROWSE;
-    }
-    while (os_enc_delta()) { // TODO figure out how enc_delta works
-        // push out backspaces to remove placeholders and no more
-    }
-    if (back_count == 0) {
-        back_count = PLACEHOLDER_COUNT;
+        buffer[PLACEHOLDER_COUNT] = '\0';
+        // send_text(buffer);
         return STATE_UNLOCKED;
     }
+    // if (get_switch_press(_BV(SWW))) {
+    //     back_count = PLACEHOLDER_COUNT;
+    //     return STATE_BROWSE;
+    // }
+    // int8_t i = os_enc_delta();
+    // if (i < 0) {
+    //     i = -i;
+    // }
+    // for (; i >= 0; --i) {
+    //     if (back_count == 0) {
+    //         break;
+    //     } else {
+    //         --back_count;
+    //     }
+    //     send_text("\b"); // TODO make this queue up in kb.c
+    // }
+
+    // if (back_count == 0) {
+    //     back_count = PLACEHOLDER_COUNT;
+    //     return STATE_UNLOCKED;
+    // }
 
     return STATE_UNLOCK;
 }
 
 int process_unlocked(void) {
     // load password into memory
-    char password[] = {};
+    char password[MAX_FILE_SIZE] = {0};
     size_t bytes = 0;
+    f_mount(&FatFs, "", 0);
+    int status;
+    if ((status = f_open(&File, filename, FA_READ)) == FR_OK) {
+        UINT b = 0;
+        while(f_read(&File, password+bytes, FILE_CHUNK_SIZE, &b) == FR_OK) {
+            if (!b) {
+                break;
+            }
+            bytes += b;
+        }
+        f_close(&File);
+        decrypt(password, bytes);
+        send_text(password);
+    } else {
+        display_string("Failed reading "); 
+        display_string(filename);
+        display_string("\n");
+    }
+    display_char(status+'0');
 
-    decrypt(password, bytes);
-    send_text(password);
     return STATE_BROWSE;
 }

@@ -81,7 +81,18 @@ int process_browse(void) {
 }
 
 int process_unlock(void) {
-    bool unlocked = false;
+    static bool unlocked = false;
+    static uint8_t back_count = 0;
+
+    if (get_switch_press(_BV(SWC))) {
+        // push out placeholder characters
+    }
+    while (os_enc_delta()) { // TODO figure out how enc_delta works
+        // push out backspaces to remove placeholders and no more
+    }
+    if (back_count == 0) {
+        unlocked = true;
+    }
 
     if (unlocked) {
         // load password into memory

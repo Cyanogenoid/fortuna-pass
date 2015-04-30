@@ -6,6 +6,7 @@
 #define STATE_BROWSE 1
 #define STATE_UNLOCK 2
 #define STATE_SD_WAIT 3
+#define STATE_UNLOCKED 4
 
 
 int transition(int);
@@ -13,6 +14,7 @@ int process_login(void);
 int process_browse(void);
 int process_unlock(void);
 int process_sd_wait(void);
+int process_unlocked(void);
 
 void main(void) {
     os_init();
@@ -26,14 +28,16 @@ void main(void) {
 int transition(int state) {
 
     switch (state) {
+        case STATE_SD_WAIT:
+            return process_sd_wait();
         case STATE_LOGIN:
             return process_login();
         case STATE_BROWSE:
             return process_browse();
         case STATE_UNLOCK:
             return process_unlock();
-        case STATE_SD_WAIT:
-            return process_sd_wait();
+        case STATE_UNLOCKED:
+            return process_unlocked();
     }
 
 }
@@ -81,7 +85,6 @@ int process_browse(void) {
 }
 
 int process_unlock(void) {
-    static bool unlocked = false;
     static uint8_t back_count = 0;
 
     if (get_switch_press(_BV(SWC))) {
@@ -91,18 +94,18 @@ int process_unlock(void) {
         // push out backspaces to remove placeholders and no more
     }
     if (back_count == 0) {
-        unlocked = true;
-    }
-
-    if (unlocked) {
-        // load password into memory
-        char password[] = {};
-        size_t bytes = 0;
-
-        decrypt(password, bytes);
-        send_text(password);
-        return STATE_BROWSE;
+        return STATE_UNLOCKED;
     }
 
     return STATE_UNLOCK;
+}
+
+int process_unlocked(void) {
+    // load password into memory
+    char password[] = {};
+    size_t bytes = 0;
+
+    decrypt(password, bytes);
+    send_text(password);
+    return STATE_BROWSE;
 }

@@ -45,6 +45,7 @@ int transition(int state) {
 int process_sd_wait(void) {
     if (get_switch_long(_BV(OS_CD))) {
         display_string("Enter your password:\n");
+        // TODO maybe check that FAT can be loaded
         return STATE_LOGIN;
     }
 
@@ -55,6 +56,7 @@ int process_login(void) {
     static char pass[256] = {0};
     static uint8_t length = 0;
 
+    // TODO find more compact encoding to allow longer pass
     if (get_switch_press(_BV(SWN))) {
         pass[length++] = 'N';
     }
@@ -67,7 +69,7 @@ int process_login(void) {
     if (get_switch_press(_BV(SWW))) {
         pass[length++] = 'W';
     }
-
+    // TODO rotary encoder should add letters to pass too
 
     if (get_switch_press(_BV(SWC))) {
         display_string(pass);
@@ -81,19 +83,29 @@ int process_login(void) {
 }
 
 int process_browse(void) {
+    // TODO start filesystem navigator
     return STATE_BROWSE;
 }
 
 int process_unlock(void) {
-    static uint8_t back_count = 0;
+    const char placeholder = '7';
+    const uint8_t placeholder_count = 8;
+    static uint8_t back_count = placeholder_count;
 
     if (get_switch_press(_BV(SWC))) {
         // push out placeholder characters
+        char buffer[placeholder_count+1] = {placeholder};
+        send_text(buffer);
+    }
+    if (get_switch_press(_BV(SWW))) {
+        back_count = placeholder_count;
+        return STATE_BROWSE;
     }
     while (os_enc_delta()) { // TODO figure out how enc_delta works
         // push out backspaces to remove placeholders and no more
     }
     if (back_count == 0) {
+        back_count = placeholder_count;
         return STATE_UNLOCKED;
     }
 

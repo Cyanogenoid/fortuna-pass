@@ -5,6 +5,7 @@
 
 
 static volatile char* to_send = "";
+static volatile char* to_send_start = "";
 
 void kb_init(void) {
     USB_Init();
@@ -14,9 +15,8 @@ void kb_init(void) {
 }
 
 void send_text(char* s) {
+    to_send_start = s;
     to_send = s;
-    // wait until text is sent
-    while (to_send[0]) {}
 }
 
 /* Translates a character into its corresponding scancode.
@@ -212,6 +212,11 @@ void CreateKeyboardReport(USB_KeyboardReport_Data_t* const ReportData)
         }
     } else {
         just_sent = false;
+    }
+
+    int i;
+    for (i = to_send_start; i <= to_send; ++i) {
+        to_send_start[i] = '\0';
     }
 }
 

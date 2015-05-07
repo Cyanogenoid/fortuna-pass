@@ -94,7 +94,7 @@ int process_login(void) {
     return STATE_LOGIN;
 }
 
-uint8_t browse_done = 0;
+volatile uint8_t browse_done = 0;
 int process_browse(void) {
     dirtree_show(1);
     static uint8_t dodgy_switch_delay = 0;
@@ -177,10 +177,6 @@ int process_unlocked(void) {
         f_close(&File);
         decrypt(password, bytes);
         send_text(password);
-        int i;
-        for (i = 0; i < bytes; ++i) {
-            password[i] = '\0';
-        }
     } else {
         display_string("Failed reading "); 
         display_string(filename);

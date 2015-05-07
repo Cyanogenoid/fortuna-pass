@@ -20,5 +20,6 @@ void os_init(void) {
     os_init_scheduler();
     os_init_ruota();
     kb_init();
+    dirtree_init();
 }
 

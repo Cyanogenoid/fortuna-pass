@@ -26,6 +26,7 @@
 #include "fatfs/ff.h"
 #include "kb/kb.h"
 #include "crypto/crypto.h"
+#include "dirtree.h"
 
 
 #define LED_ON      PORTB |=  _BV(PINB7)

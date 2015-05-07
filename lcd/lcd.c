@@ -239,8 +239,18 @@ void display_string(char *str)
         display_char(str[i]);
 }
 
-void display_string_xy(char *str, uint16_t x, uint16_t y)
-{
+void display_move(uint16_t x, uint16_t y) {
+    display.x = x;
+    display.y = y;
+}
+
+void display_color(uint16_t fg, uint16_t bg) {
+	display.foreground = fg;
+	display.background = bg;
+	
+}
+
+void display_string_xy(char *str, uint16_t x, uint16_t y) {
     uint8_t i;
     display.x = x;
     display.y = y;

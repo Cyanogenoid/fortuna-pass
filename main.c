@@ -145,43 +145,11 @@ void select_file(const char* fname) {
     strcpy(filename, fname);
     clear_screen();
     dirtree_show(0);
-    display_string_xy(fname, 0, 0);
     browse_done = 1;
 }
 
 int process_unlock(void) {
-    display_string("Spin to win\n");
-    static uint8_t back_count = PLACEHOLDER_COUNT;
-
-    if (get_switch_press(_BV(SWC))) {
-        // push out placeholder characters
-        char buffer[PLACEHOLDER_COUNT+1] = {PLACEHOLDER};
-        buffer[PLACEHOLDER_COUNT] = '\0';
-        // send_text(buffer);
-        return STATE_UNLOCKED;
-    }
-    // if (get_switch_press(_BV(SWW))) {
-    //     back_count = PLACEHOLDER_COUNT;
-    //     return STATE_BROWSE;
-    // }
-    // int8_t i = os_enc_delta();
-    // if (i < 0) {
-    //     i = -i;
-    // }
-    // for (; i >= 0; --i) {
-    //     if (back_count == 0) {
-    //         break;
-    //     } else {
-    //         --back_count;
-    //     }
-    //     send_text("\b"); // TODO make this queue up in kb.c
-    // }
-
-    // if (back_count == 0) {
-    //     back_count = PLACEHOLDER_COUNT;
-    //     return STATE_UNLOCKED;
-    // }
-
+    // TODO unlock mechanism
     return STATE_UNLOCK;
 }
 
@@ -209,5 +177,5 @@ int process_unlocked(void) {
     }
     display_char(status+'0');
 
-    return STATE_BROWSE;
+    return STATE_LOGIN;
 }

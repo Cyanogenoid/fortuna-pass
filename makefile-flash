@@ -17,7 +17,7 @@ BOARD        = LaFortuna
 F_CPU        = 8000000
 F_USB        = $(F_CPU)
 OPTIMIZATION = s
-TARGET       = main
+TARGET       = flash-private
 OS_SRC       = os.c
 OS_SRC += $(wildcard rios/*.c)
 OS_SRC += $(wildcard ruota/*.c)
@@ -39,9 +39,9 @@ LD_FLAGS     =
 # Default target
 all:
 
-upload: main.hex
+upload: flash-private.hex
 	dfu-programmer $(MCU) erase --force
-	dfu-programmer $(MCU) flash main.hex
+	dfu-programmer $(MCU) flash flash-private.hex
 	dfu-programmer $(MCU) launch
 
 # Include LUFA build script makefiles

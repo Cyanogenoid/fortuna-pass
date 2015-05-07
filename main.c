@@ -19,6 +19,8 @@ int process_unlock(void);
 int process_sd_wait(void);
 int process_unlocked(void);
 
+void select_file(const char* fname);
+
 
 static char filename[256] = {0};
 static FIL File;
@@ -26,6 +28,7 @@ static FIL File;
 void main(void) {
     os_init();
 
+    dirtree_set_select_func(select_file);
     os_add_task( transition,  100, STATE_SD_WAIT);
 
     sei();
@@ -50,7 +53,9 @@ int transition(int state) {
 }
 
 int process_sd_wait(void) {
+    display_string("Waiting for SD card...\n");
     if (get_switch_long(_BV(OS_CD))) {
+        clear_screen();
         display_string("Enter your password:\n");
         // TODO maybe check that FAT can be loaded
         return STATE_LOGIN;
@@ -89,11 +94,59 @@ int process_login(void) {
     return STATE_LOGIN;
 }
 
+uint8_t browse_done = 0;
 int process_browse(void) {
-    // TODO start filesystem navigator
-    strcpy(&filename, "test.txt");
-    return STATE_UNLOCK;
-    // return STATE_BROWSE;
+    dirtree_show(1);
+    static uint8_t dodgy_switch_delay = 0;
+
+    if (get_switch_press(_BV(SWN))) {
+        dodgy_switch_delay = 1;
+        dirtree_move_up();
+    }
+
+    if (get_switch_press(_BV(SWE))) {
+        dodgy_switch_delay = 1;
+        dirtree_expand();
+    }
+
+    if (get_switch_press(_BV(SWS))) {
+        dodgy_switch_delay = 1;
+        dirtree_move_down();
+    }
+
+    if (get_switch_press(_BV(SWW))) {
+        dodgy_switch_delay = 1;
+        dirtree_contract();
+    }
+
+    if (get_switch_rpt(_BV(SWN))) {
+        if (dodgy_switch_delay == 0)
+            dirtree_move_up();
+        else
+            dodgy_switch_delay = 0;
+    }
+
+    if (get_switch_rpt(_BV(SWS))) {
+        if (dodgy_switch_delay == 0)
+            dirtree_move_down();
+        else
+            dodgy_switch_delay = 0;
+    }
+
+    if (browse_done) {
+        browse_done = 0;
+        return STATE_UNLOCK;
+    } else {
+        return STATE_BROWSE;
+    }
+}
+
+void select_file(const char* fname) {
+    strcpy(filename, fname);
+    clear_screen();
+    dirtree_show(0);
+    display_string_xy(fname, 0, 0);
+    browse_done = 1;
 }
 
 int process_unlock(void) {

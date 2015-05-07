@@ -349,6 +349,9 @@ void dirtree_show(uint8_t ns)
 {
 	if (ns)
 	{
+		if (showing) {
+			return;
+		}
 		clear_screen();
 		dirtree_repaint(); // invalidates everything
 

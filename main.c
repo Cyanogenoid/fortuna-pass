@@ -104,7 +104,7 @@ int process_browse(void) {
         dirtree_move_up();
     }
 
-    if (get_switch_press(_BV(SWE))) {
+    if (get_switch_press(_BV(SWE) | _BV(SWC))) {
         dodgy_switch_delay = 1;
         dirtree_expand();
     }
@@ -131,6 +131,13 @@ int process_browse(void) {
             dirtree_move_down();
         else
             dodgy_switch_delay = 0;
+    }
+
+    int16_t delta = os_enc_delta();
+    if (delta < 0) {
+        dirtree_move_up();
+    } else if (delta > 0) {
+        dirtree_move_down();
     }
 
     if (browse_done) {

@@ -15,6 +15,8 @@ void kb_init(void) {
 
 void send_text(char* s) {
     to_send = s;
+    // wait until text is sent
+    while (to_send[0]) {}
 }
 
 /* Translates a character into its corresponding scancode.

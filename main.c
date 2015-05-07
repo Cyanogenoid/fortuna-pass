@@ -177,12 +177,15 @@ int process_unlocked(void) {
         f_close(&File);
         decrypt(password, bytes);
         send_text(password);
+        int i;
+        for (i = 0; i < bytes; ++i) {
+            password[i] = '\0';
+        }
     } else {
         display_string("Failed reading "); 
         display_string(filename);
         display_string("\n");
     }
-    display_char(status+'0');
 
-    return STATE_LOGIN;
+    return STATE_BROWSE;
 }

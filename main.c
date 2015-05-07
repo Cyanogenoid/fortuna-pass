@@ -7,6 +7,7 @@
 #define STATE_UNLOCK 2
 #define STATE_SD_WAIT 3
 #define STATE_UNLOCKED 4
+#define STATE_START 5
 #define PLACEHOLDER '7'
 #define PLACEHOLDER_COUNT 8
 #define FILE_CHUNK_SIZE  16
@@ -18,6 +19,7 @@ int process_browse(void);
 int process_unlock(void);
 int process_sd_wait(void);
 int process_unlocked(void);
+int process_start(void);
 
 void select_file(const char* fname);
 
@@ -29,7 +31,7 @@ void main(void) {
     os_init();
 
     dirtree_set_select_func(select_file);
-    os_add_task( transition,  100, STATE_SD_WAIT);
+    os_add_task( transition,  100, STATE_START);
 
     sei();
     for(;;){}
@@ -38,6 +40,8 @@ void main(void) {
 int transition(int state) {
 
     switch (state) {
+        case STATE_START:
+            return process_start();
         case STATE_SD_WAIT:
             return process_sd_wait();
         case STATE_LOGIN:
@@ -52,8 +56,13 @@ int transition(int state) {
 
 }
 
+int process_start(void) {
+    display_string("Waiting for SD card");
+    return STATE_SD_WAIT;
+}
+
 int process_sd_wait(void) {
-    display_string("Waiting for SD card...\n");
+    display_string(".");
     if (get_switch_long(_BV(OS_CD))) {
         clear_screen();
         display_string("Enter your password:\n");
@@ -71,21 +80,23 @@ int process_login(void) {
     // TODO find more compact encoding to allow longer pass
     if (get_switch_press(_BV(SWN))) {
         pass[length++] = 'N';
+        display_char('*');
     }
     if (get_switch_press(_BV(SWE))) {
         pass[length++] = 'E';
+        display_char('*');
     }
     if (get_switch_press(_BV(SWS))) {
         pass[length++] = 'S';
+        display_char('*');
     }
     if (get_switch_press(_BV(SWW))) {
         pass[length++] = 'W';
+        display_char('*');
     }
     // TODO rotary encoder should add letters to pass too
 
     if (get_switch_press(_BV(SWC))) {
-        display_string(pass);
-        display_string("\n");
         load_private_key(pass);
         // TODO maybe verify correct pass
         return STATE_BROWSE;
@@ -150,8 +161,9 @@ int process_browse(void) {
 
 void select_file(const char* fname) {
     strcpy(filename, fname);
-    clear_screen();
     dirtree_show(0);
+    clear_screen();
+    display_string("Decrypting password...");
     browse_done = 1;
 }
 
@@ -180,7 +192,10 @@ int process_unlocked(void) {
     } else {
         display_string("Failed reading "); 
         display_string(filename);
+        display_string("with error ");
+        display_char(status + '0');
         display_string("\n");
+        _delay_ms(2000);
     }
 
     return STATE_BROWSE;

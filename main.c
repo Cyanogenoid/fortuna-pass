@@ -150,7 +150,7 @@ void select_file(const char* fname) {
 
 int process_unlock(void) {
     // TODO unlock mechanism
-    return STATE_UNLOCK;
+    return STATE_UNLOCKED;
 }
 
 int process_unlocked(void) {

@@ -24,7 +24,7 @@ int process_start(void);
 void select_file(const char* fname);
 
 
-static char filename[256] = {0};
+static char* filename;
 static FIL File;
 
 void main(void) {
@@ -160,10 +160,12 @@ int process_browse(void) {
 }
 
 void select_file(const char* fname) {
-    strcpy(filename, fname);
     dirtree_show(0);
     clear_screen();
     display_string("Decrypting password...");
+    free(filename);
+    filename = malloc(sizeof(char)*256);
+    strcpy(filename, fname);
     browse_done = 1;
 }
 
@@ -174,7 +176,7 @@ int process_unlock(void) {
 
 int process_unlocked(void) {
     // load password into memory
-    char password[MAX_FILE_SIZE] = {0};
+    char* password = malloc(sizeof(char)*MAX_FILE_SIZE);
     size_t bytes = 0;
     f_mount(&FatFs, "", 0);
     int status;
@@ -187,16 +189,17 @@ int process_unlocked(void) {
             bytes += b;
         }
         f_close(&File);
-        decrypt(password, bytes);
+        password = decrypt(password, bytes);
         send_text(password);
     } else {
         display_string("Failed reading "); 
         display_string(filename);
-        display_string("with error ");
+        display_string(" with error ");
         display_char(status + '0');
         display_string("\n");
         _delay_ms(2000);
     }
 
+    free(password);
     return STATE_BROWSE;
 }

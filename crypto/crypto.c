@@ -3,6 +3,9 @@
 #include <avr/eeprom.h>
 #include <stdlib.h>
 
+#include "os.h"
+#include <avr/delay.h>
+
 char eep_priv_key[PRIVATE_KEY_LENGTH_BYTE] EEMEM;
 bigint_t modulus = {
     .length_W = 3,
@@ -24,27 +27,34 @@ void load_private_key(char* key) {
         aes256_dec(buffer+i, &context);
     }
     // make into bigint
-    bigint_t local_priv_d = {
+    priv_d = (bigint_t) {
         .length_W = PRIVATE_KEY_LENGTH_BYTE,
         .wordv = buffer,
     };
-    priv_d = local_priv_d;
     bigint_adjust(&priv_d);
     bigint_adjust(&modulus);
     // put into private key
-    rsa_privatekey_t local_priv_key = {
+    priv_key =  (rsa_privatekey_t) {
         .n = 1,
         .modulus = modulus,
         .components = &priv_d,
     };
-    priv_key = local_priv_key;
 }
 
-void decrypt(void* buffer, size_t length_B) {
-    // bigint_t data = {
-    //     .length_W = length_B,
-    //     .wordv = buffer,
-    // };
-    // bigint_adjust(&data);
-    // rsa_dec(&data, &priv_key);
+void* decrypt(void* buffer, size_t length_B) {
+    bigint_t data = {
+        .length_W = length_B,
+        .wordv = buffer,
+    };
+    bigint_adjust(&data);
+    display_uint16(priv_key.components->wordv[0]);
+    display_char('\n');
+    display_uint16(priv_key.components->length_W);
+    display_char('\n');
+    display_string(data.wordv);
+    display_char('\n');
+    rsa_dec(&data, &priv_key);
+    display_string(data.wordv);
+    _delay_ms(10000);
+    return data.wordv;
 }

@@ -5,6 +5,7 @@ Somewhat Secure Password Manager for the LaFortuna AVR board.
 - One master password to rule them all.
 - Browse the filesystem on the SD card to select the password you want to use.
 - Pretends to be a keyboard so that it can send the password directly to your computer. No need to type it in manually!
+- Only works if the keyboard language is set to US in your operating system!
 
 ## Security
 - [x] Uses AES-256 for password encryption
@@ -12,6 +13,13 @@ Somewhat Secure Password Manager for the LaFortuna AVR board.
 - [x] Keeps your master password floating somewhere in memory
 - [x] Keeps the passwords you used floating somewhere in memory
 - [ ] Written by a cryptography expert
+
+## Usage
+Clone the repository and follow build instructions to flash program onto LaFortuna.
+Come up with a combination of directional keys and half-circle rotations for the master password and add some passwords as per the Adding Passwords section.
+Whenever you want to use it, plug in the LaFortuna with the SD card plugged in, enter your master password and confirm it by clicking the centre button, then select the file corresponding to the password you want.
+It will now send your password to the computer it is connected to over USB.
+You probably want to disconnect the LaFortuna once you're done.
 
 ## Build Instructions
     git submodule init

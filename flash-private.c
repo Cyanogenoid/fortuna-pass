@@ -4,6 +4,7 @@
 #include <avr/eeprom.h>
 
 extern char eep_priv_key[];
+extern char eep_publ_key[];
 void main(void) {
     os_init();
 
@@ -20,6 +21,7 @@ void main(void) {
     }
 
     eeprom_update_block(buffer, eep_priv_key, PRIVATE_KEY_LENGTH_BYTE);
+    eeprom_update_block(PUBLIC_KEY, eep_publ_key, PRIVATE_KEY_LENGTH_BYTE);
 
 
     LED_ON;

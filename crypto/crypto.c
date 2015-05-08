@@ -7,18 +7,17 @@
 #include <avr/delay.h>
 
 char eep_priv_key[PRIVATE_KEY_LENGTH_BYTE] EEMEM;
-bigint_t modulus = {
-    .length_W = 3,
-    .info = 0,
-    .wordv = (bigint_t[]) {MODULUS_RIGHT, MODULUS_MIDDLE, MODULUS_LEFT},
-};
+char eep_publ_key[PRIVATE_KEY_LENGTH_BYTE] EEMEM;
 static rsa_privatekey_t priv_key;
 static bigint_t priv_d;
+static bigint_t publ_n;
 
 void load_private_key(char* key) {
     // load key
     char* buffer = (char*) malloc(PRIVATE_KEY_LENGTH_BYTE);
     eeprom_read_block(buffer, eep_priv_key, PRIVATE_KEY_LENGTH_BYTE);
+    char* publ_buffer = (char*) malloc(PRIVATE_KEY_LENGTH_BYTE);
+    eeprom_read_block(publ_buffer, eep_publ_key, PRIVATE_KEY_LENGTH_BYTE);
     // decrypt with AES
     aes256_ctx_t context = {{0}};
     aes256_init(key, &context);
@@ -26,17 +25,23 @@ void load_private_key(char* key) {
     for (i = 0; i < PRIVATE_KEY_LENGTH_BYTE; i += 16) {
         aes256_dec(buffer+i, &context);
     }
-    // make into bigint
+    // make into bigints
     priv_d = (bigint_t) {
         .length_W = PRIVATE_KEY_LENGTH_BYTE,
+        .info = 0,
         .wordv = buffer,
     };
+    publ_n = (bigint_t) {
+        .length_W = PRIVATE_KEY_LENGTH_BYTE,
+        .info = 0,
+        .wordv = publ_buffer,
+    };
+    bigint_adjust(&publ_n);
     bigint_adjust(&priv_d);
-    bigint_adjust(&modulus);
     // put into private key
     priv_key =  (rsa_privatekey_t) {
         .n = 1,
-        .modulus = modulus,
+        .modulus = publ_n,
         .components = &priv_d,
     };
 }
@@ -44,17 +49,14 @@ void load_private_key(char* key) {
 void* decrypt(void* buffer, size_t length_B) {
     bigint_t data = {
         .length_W = length_B,
-        .wordv = buffer,
+        .info = 0,
+        .wordv = (bigint_word_t*) buffer,
     };
     bigint_adjust(&data);
-    display_uint16(priv_key.components->wordv[0]);
-    display_char('\n');
-    display_uint16(priv_key.components->length_W);
-    display_char('\n');
-    display_string(data.wordv);
-    display_char('\n');
+
     rsa_dec(&data, &priv_key);
-    display_string(data.wordv);
-    _delay_ms(10000);
+    display_string("\nPost: ");
+    display_uint16(data.wordv[0]);
+    _delay_ms(1000000);
     return data.wordv;
 }

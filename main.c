@@ -189,7 +189,7 @@ int process_unlocked(void) {
             bytes += b;
         }
         f_close(&File);
-        password = decrypt(password, bytes);
+        decrypt(password, bytes);
         send_text(password);
     } else {
         display_string("Failed reading "); 

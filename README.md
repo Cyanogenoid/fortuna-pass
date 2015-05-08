@@ -7,7 +7,7 @@ Somewhat Secure Password Manager for the LaFortuna AVR board.
 - Pretends to be a keyboard so that it can send the password directly to your computer. No need to type it in manually!
 
 ## Security
-- [x] Uses AES-256 for storing passwords
+- [x] Uses AES-256 for password encryption
 - [x] Uses the insecure ECB mode of operation
 - [x] Keeps your master password floating somewhere in memory
 - [x] Keeps the passwords you used floating somewhere in memory
@@ -20,9 +20,10 @@ Somewhat Secure Password Manager for the LaFortuna AVR board.
 
 ## Adding Passwords
 Requires Python 2 and PyCrypto.
-`encrypt.py` takes the AES password as argument and outputs the encrypted stdin on stdout.
-Pipe it into a file on the SD card that stick into the LaFortuna and you're good to go.
-Example: `python encrypt.py "NESW" <<< "oh no my secret is out!" > foo.txt`
+`encrypt.py` takes the AES password as argument and outputs the encrypted plaintext fed in through stdin on stdout.
+The allowed characters in passwords are `N`, `E`, `S`, `W` for the directional buttons and `L`, `R` for turning the wheel by 180 degrees left (counter-clockwise) and right (clockwise) respectively.
+Pipe the the output into a file on the SD card, stick it into the LaFortuna and you're good to go.
+Example: `python2 encrypt.py 'NNESWLLRR' <<< 'oh no my secret is out!' > foo.txt`
 
 ## Attribution
 - `dirtree.*` by @VisualMelon with permission

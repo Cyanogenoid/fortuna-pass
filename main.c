@@ -74,25 +74,42 @@ int process_sd_wait(void) {
 int process_login(void) {
     static char pass[256] = {0};
     static uint8_t length = 0;
+    static int8_t encoder = 0;
+
+    encoder += os_enc_delta();
 
     // TODO find more compact encoding to allow longer pass
     if (get_switch_press(_BV(SWN))) {
+        encoder = 0;
         pass[length++] = 'N';
         display_char('*');
     }
     if (get_switch_press(_BV(SWE))) {
+        encoder = 0;
         pass[length++] = 'E';
         display_char('*');
     }
     if (get_switch_press(_BV(SWS))) {
+        encoder = 0;
         pass[length++] = 'S';
         display_char('*');
     }
     if (get_switch_press(_BV(SWW))) {
+        encoder = 0;
         pass[length++] = 'W';
         display_char('*');
     }
-    // TODO rotary encoder should add letters to pass too
+    if (encoder < -7) {
+        encoder = 0;
+        pass[length++] = 'L';
+        display_char('*');
+    }
+    if (encoder > 7) {
+        encoder = 0;
+        pass[length++] = 'R';
+        display_char('*');
+    }
+
 
     if (get_switch_press(_BV(SWC))) {
         load_private_key(pass);

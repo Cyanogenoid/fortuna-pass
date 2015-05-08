@@ -71,43 +71,50 @@ int process_sd_wait(void) {
     return STATE_SD_WAIT;
 }
 
+void add_pass_char(char* pass, int8_t* encoder, uint8_t c) {
+    static uint8_t low_bits = 1;
+    static uint8_t length = 0;
+
+    if (length > 32) {
+        return;
+    }
+
+    if (low_bits) {
+        pass[length] |= c;
+    } else {
+        pass[length] |= c << 4;
+        length += 1;
+    }
+
+    *encoder = 0;
+    low_bits = 1 - low_bits;
+    display_char('*');
+}
+
 int process_login(void) {
     static char pass[256] = {0};
-    static uint8_t length = 0;
     static int8_t encoder = 0;
 
     encoder += os_enc_delta();
 
     // TODO find more compact encoding to allow longer pass
     if (get_switch_press(_BV(SWN))) {
-        encoder = 0;
-        pass[length++] = 'N';
-        display_char('*');
+        add_pass_char(pass, &encoder, 1);
     }
     if (get_switch_press(_BV(SWE))) {
-        encoder = 0;
-        pass[length++] = 'E';
-        display_char('*');
+        add_pass_char(pass, &encoder, 2);
     }
     if (get_switch_press(_BV(SWS))) {
-        encoder = 0;
-        pass[length++] = 'S';
-        display_char('*');
+        add_pass_char(pass, &encoder, 3);
     }
     if (get_switch_press(_BV(SWW))) {
-        encoder = 0;
-        pass[length++] = 'W';
-        display_char('*');
+        add_pass_char(pass, &encoder, 4);
     }
     if (encoder < -7) {
-        encoder = 0;
-        pass[length++] = 'L';
-        display_char('*');
+        add_pass_char(pass, &encoder, 5);
     }
     if (encoder > 7) {
-        encoder = 0;
-        pass[length++] = 'R';
-        display_char('*');
+        add_pass_char(pass, &encoder, 6);
     }
 
 

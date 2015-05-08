@@ -8,10 +8,8 @@
 #define STATE_SD_WAIT 3
 #define STATE_UNLOCKED 4
 #define STATE_START 5
-#define PLACEHOLDER '7'
-#define PLACEHOLDER_COUNT 8
 #define FILE_CHUNK_SIZE  16
-#define MAX_FILE_SIZE  512
+#define MAX_FILE_SIZE  256
 
 int transition(int);
 int process_login(void);
@@ -176,7 +174,15 @@ int process_unlock(void) {
 
 int process_unlocked(void) {
     // load password into memory
-    char* password = malloc(sizeof(char)*MAX_FILE_SIZE);
+    static char* password = NULL;
+    free(password);
+    password = malloc(sizeof(char)*MAX_FILE_SIZE);
+
+    int i;
+    for (i = 0; i < MAX_FILE_SIZE; ++i) {
+        password[i] = '\0';
+    }
+
     size_t bytes = 0;
     f_mount(&FatFs, "", 0);
     int status;
@@ -200,6 +206,5 @@ int process_unlocked(void) {
         _delay_ms(2000);
     }
 
-    free(password);
     return STATE_BROWSE;
 }

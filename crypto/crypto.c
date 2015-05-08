@@ -2,7 +2,8 @@
 
 #include <avr/eeprom.h>
 #include <stdlib.h>
-
+#include "os.h"
+#include <util/delay.h>
 
 static aes256_ctx_t aes_key;
 

@@ -1,6 +1,11 @@
 # fortuna-pass
 Somewhat Secure Password Manager for the LaFortuna AVR board.
 
+## Features
+- One master password to rule them all.
+- Browse the filesystem on the SD card to select the password you want to use.
+- Pretends to be a keyboard so that it can send the password directly to your computer. No need to type it in manually!
+
 ## Security
 - [x] Uses AES-256 for storing passwords
 - [x] Uses the insecure ECB mode of operation

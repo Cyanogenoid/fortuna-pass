@@ -16,13 +16,13 @@ Somewhat Secure Password Manager for the LaFortuna AVR board.
 ## Build Instructions
     git submodule init
     git submodule update
-    git apply bigint-no-debug.patch
     make upload
 
 ## Adding Passwords
 Requires Python 2 and PyCrypto.
 `encrypt.py` takes the AES password as argument and outputs the encrypted stdin on stdout.
 Pipe it into a file on the SD card that stick into the LaFortuna and you're good to go.
+Example: `python encrypt.py "NESW" <<< "oh no my secret is out!" > foo.txt`
 
 ## Attribution
 - `dirtree.*` by @VisualMelon with permission

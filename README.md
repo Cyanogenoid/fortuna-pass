@@ -5,7 +5,7 @@ Somewhat Secure Password Manager for the LaFortuna AVR board.
 - One master password to rule them all.
 - Browse the filesystem on the SD card to select the password you want to use.
 - Pretends to be a keyboard so that it can send the password directly to your computer. No need to type it in manually!
-- Only works if the keyboard language is set to US in your operating system!
+- Special characters only work if the keyboard language is set to US in your operating system!
 
 ## Security
 - [x] Uses AES-256 for password encryption
